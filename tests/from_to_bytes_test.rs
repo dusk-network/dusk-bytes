@@ -4,8 +4,6 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
-#![feature(min_const_generics)]
-
 use dusk_bytes::{BadLength, Serializable};
 
 #[derive(Debug)]

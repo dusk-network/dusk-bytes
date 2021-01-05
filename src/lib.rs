@@ -4,7 +4,5 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
-#![feature(min_const_generics)]
-
 mod serializable;
 pub use serializable::{BadLength, Serializable};
