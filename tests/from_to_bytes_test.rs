@@ -58,13 +58,7 @@ mod from_bytes {
     fn wrong_buffer() {
         let beef = Beef::from_bytes(&[0x0, 0x1]);
 
-        let result = match beef {
-            Err(err) => match err {
-                BeefError::InvalidBytes => true,
-                _ => false,
-            },
-            _ => false,
-        };
+        let result = matches!(beef, Err(BeefError::InvalidBytes));
 
         assert!(result, "Invalid representation passed");
     }
@@ -73,13 +67,7 @@ mod from_bytes {
     fn buffer_too_small() {
         let beef = Beef::from_bytes(&[0x0]);
 
-        let result = match beef {
-            Err(err) => match err {
-                BeefError::UnexpectedEof => true,
-                _ => false,
-            },
-            _ => false,
-        };
+        let result = matches!(beef, Err(BeefError::UnexpectedEof));
 
         assert!(result, "Not enough bytes to parse");
     }
