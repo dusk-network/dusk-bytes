@@ -4,9 +4,10 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
-use dusk_bytes::{BadLength, Serializable};
+use dusk_bytes::{BadLength, DeserializableSlice, Serializable};
 
-#[derive(Debug)]
+use dusk_bytes::HexDisplay;
+#[derive(Debug, HexDisplay)]
 struct Beef {}
 
 #[derive(Debug)]
@@ -17,10 +18,7 @@ enum BeefError {
 
 impl Serializable<2> for Beef {
     type Error = BeefError;
-    // `from_bytes` is usually never implemented directly, but it's usually
-    // the one called by the consumer, since it performs the checks to ensure
-    // the proper sizing for the slice of bytes for the current struct.
-    fn from_bytes_unsized(buf: &[u8]) -> Result<Self, Self::Error> {
+    fn from_bytes(buf: &[u8; Self::SIZE]) -> Result<Self, Self::Error> {
         if buf[0] == 0xbe && buf[1] == 0xef {
             Ok(Self {})
         } else {
@@ -33,6 +31,11 @@ impl Serializable<2> for Beef {
     }
 }
 
+// This implements automatically `from_bytes_slice` and length checks
+impl DeserializableSlice<2> for Beef {}
+
+// Implementing DeserializableSlice requires `Error` to implements `BadLength`
+// too
 impl BadLength for BeefError {
     fn bad_length(_found: usize, _expected: usize) -> Self {
         Self::UnexpectedEof
@@ -49,14 +52,16 @@ mod from_bytes {
 
     #[test]
     fn correct_buffer() {
-        let beef = Beef::from_bytes(&[0xbe, 0xef]);
+        let buf = [0xbe, 0xef];
+        let beef = Beef::from_bytes(&buf);
 
         assert!(beef.is_ok(), "Structure created without error");
     }
 
     #[test]
     fn wrong_buffer() {
-        let beef = Beef::from_bytes(&[0x0, 0x1]);
+        let buf = [0x0, 0x1];
+        let beef = Beef::from_bytes(&buf);
 
         let result = matches!(beef, Err(BeefError::InvalidBytes));
 
@@ -65,7 +70,7 @@ mod from_bytes {
 
     #[test]
     fn buffer_too_small() {
-        let beef = Beef::from_bytes(&[0x0]);
+        let beef = Beef::from_bytes_slice(&[0x0]);
 
         let result = matches!(beef, Err(BeefError::UnexpectedEof));
 
@@ -74,7 +79,7 @@ mod from_bytes {
 
     #[test]
     fn bigger_buffer() {
-        let beef = Beef::from_bytes(&[0xbe, 0xef, 0x10, 0x20]);
+        let beef = Beef::from_bytes_slice(&[0xbe, 0xef, 0x10, 0x20]);
 
         assert!(beef.is_ok(), "Structure created without error");
     }
@@ -109,12 +114,22 @@ mod functions {
 
         // it's also possible to enforce the size for the compiler,
         // so:
-        //
+
         //     let info = generic_info::<_, 1>(beef);
-        //
+
         // will prevent the compiler to proceed since the size of
         // beef is `2`.
 
         assert_eq!(info, "Size: 2, Bytes: [190, 239]");
+    }
+
+    #[test]
+    fn formatting() {
+        let beef = Beef {};
+
+        assert_eq!(format!("{:x}", beef), "beef");
+        assert_eq!(format!("{:#x}", beef), "0xbeef");
+        assert_eq!(format!("{:X}", beef), "BEEF");
+        assert_eq!(format!("{:#X}", beef), "0xBEEF");
     }
 }

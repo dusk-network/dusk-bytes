@@ -5,4 +5,8 @@
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
 mod serializable;
-pub use serializable::{BadLength, Serializable};
+pub use derive_macro::HexDisplay;
+pub use serializable::{
+    BadLength, DeserializableHexStr, DeserializableSlice, InvalidChar,
+    Serializable,
+};
