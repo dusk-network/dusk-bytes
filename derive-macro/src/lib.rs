@@ -44,7 +44,8 @@ pub fn derive_hex(item: TokenStream) -> TokenStream {
                 Ok(())
             }
         }
-    }).into()
+    })
+    .into()
 }
 
 #[proc_macro_derive(HexDebug)]
