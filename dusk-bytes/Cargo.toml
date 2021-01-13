@@ -1,0 +1,8 @@
+[package]
+name = "dusk-bytes"
+version = "0.1.0"
+authors = ["zer0 <zer0@nayma.com>"]
+edition = "2018"
+
+[dependencies]
+derive-hex = { path = "../derive-hex", version = "0.1" }
