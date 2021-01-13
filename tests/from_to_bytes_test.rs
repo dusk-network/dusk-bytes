@@ -6,8 +6,8 @@
 
 use dusk_bytes::{BadLength, DeserializableSlice, Serializable};
 
-use dusk_bytes::HexDisplay;
-#[derive(Debug, HexDisplay)]
+use dusk_bytes::HexDebug;
+#[derive(HexDebug)]
 struct Beef {}
 
 #[derive(Debug)]
@@ -70,7 +70,7 @@ mod from_bytes {
 
     #[test]
     fn buffer_too_small() {
-        let beef = Beef::from_bytes_slice(&[0x0]);
+        let beef = Beef::from_slice(&[0x0]);
 
         let result = matches!(beef, Err(BeefError::UnexpectedEof));
 
@@ -79,7 +79,7 @@ mod from_bytes {
 
     #[test]
     fn bigger_buffer() {
-        let beef = Beef::from_bytes_slice(&[0xbe, 0xef, 0x10, 0x20]);
+        let beef = Beef::from_slice(&[0xbe, 0xef, 0x10, 0x20]);
 
         assert!(beef.is_ok(), "Structure created without error");
     }

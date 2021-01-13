@@ -4,9 +4,17 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
-mod serializable;
-pub use derive_macro::HexDisplay;
-pub use serializable::{
-    BadLength, DeserializableHexStr, DeserializableSlice, InvalidChar,
-    Serializable,
-};
+#![feature(external_doc)]
+#![deny(missing_docs)]
+#![doc(include = "../README.md")]
+#![no_std]
+
+mod errors;
+mod parse;
+mod serialize;
+
+pub use errors::{BadLength, Error, InvalidChar};
+pub use parse::ParseHexStr;
+pub use serialize::{DeserializableSlice, Serializable};
+
+pub use derive_macro::{Hex, HexDebug};
