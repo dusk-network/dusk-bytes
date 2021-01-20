@@ -1,0 +1,15 @@
+[package]
+name = "dusk-bytes"
+version = "0.1.0"
+authors = ["zer0 <matteo@dusk.network>"]
+edition = "2018"
+
+repository = "https://github.com/dusk-network/dusk-bytes"
+keywords = ["encoding", "no_std", "formatting"]
+categories =["encoding"]
+description = "A trait that uses constant generics to implement de/serialization on sized type"
+license = "MPL-2.0"
+
+
+[dependencies]
+derive-hex = { path = "../derive-hex", version = "0.1" }

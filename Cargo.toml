@@ -1,8 +1,5 @@
-[package]
-name = "dusk-bytes"
-version = "0.1.0"
-authors = ["zer0 <zer0@nayma.com>"]
-edition = "2018"
-
-[dependencies]
-derive-macro = { path = "derive-macro" }
+[workspace]
+members = [
+    "derive-hex",
+    "dusk-bytes"
+]
