@@ -4,6 +4,12 @@ version = "0.1.0"
 authors = ["zer0 <matteo@dusk.network>"]
 edition = "2018"
 
+repository = "https://github.com/dusk-network/dusk-bytes"
+keywords = ["hex", "no_std", "formatting"]
+categories =["No standard library", "Encoding"]
+description = "A simple companion macro for dusk-bytes crate"
+license = "MPL-2.0"
+
 [lib]
 proc-macro = true
 
@@ -11,6 +17,3 @@ proc-macro = true
 proc-macro2 = "1.0"
 quote = "1.0"
 syn = "1.0"
-
-[dev-dependencies]
-dusk-bytes = { path = "../dusk-bytes", version = "0.1" }

@@ -5,22 +5,17 @@
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
 use derive_hex::HexDebug;
-use dusk_bytes::{Error, Serializable};
 
 #[derive(HexDebug)]
 struct Beef {}
 
-impl Serializable<2> for Beef {
-    type Error = Error;
-    fn from_bytes(buf: &[u8; Self::SIZE]) -> Result<Self, Error> {
-        if buf[0] == 0xbe && buf[1] == 0xef {
-            Ok(Self {})
-        } else {
-            Err(Error::InvalidData)
-        }
-    }
-
-    fn to_bytes(&self) -> [u8; Self::SIZE] {
+// Cannot import as dev-dependencies `dusk-bytes` since it creates a circular
+// dependendecies that `cargo publish` can't understand is legit, until
+// `cargo publish --all` is implemented (or similar solution).
+//
+// So we manually add the `to_bytes` method requested by `HexDebug` macro.
+impl Beef {
+    pub fn to_bytes(&self) -> [u8; 2] {
         [0xbe, 0xef]
     }
 }
