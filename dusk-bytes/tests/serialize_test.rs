@@ -4,43 +4,10 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
-use dusk_bytes::{BadLength, DeserializableSlice, Serializable};
+mod common;
+use common::{Beef, BeefError};
 
-use dusk_bytes::HexDebug;
-#[derive(HexDebug)]
-struct Beef {}
-
-#[derive(Debug)]
-enum BeefError {
-    InvalidBytes,
-    UnexpectedEof,
-}
-
-impl Serializable<2> for Beef {
-    type Error = BeefError;
-    fn from_bytes(buf: &[u8; Self::SIZE]) -> Result<Self, Self::Error> {
-        if buf[0] == 0xbe && buf[1] == 0xef {
-            Ok(Self {})
-        } else {
-            Err(BeefError::InvalidBytes)
-        }
-    }
-
-    fn to_bytes(&self) -> [u8; Self::SIZE] {
-        [0xbe, 0xef]
-    }
-}
-
-// This implements automatically `from_bytes_slice` and length checks
-impl DeserializableSlice<2> for Beef {}
-
-// Implementing DeserializableSlice requires `Error` to implements `BadLength`
-// too
-impl BadLength for BeefError {
-    fn bad_length(_found: usize, _expected: usize) -> Self {
-        Self::UnexpectedEof
-    }
-}
+use dusk_bytes::{DeserializableSlice, Serializable};
 
 #[test]
 fn expected_size() {

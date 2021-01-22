@@ -48,3 +48,6 @@ fn val(c: u8) -> Option<u8> {
         _ => None,
     }
 }
+
+// Auto trait [`ParseHexStr`] for any type that implements [`Serializable`]
+impl<T, const N: usize> ParseHexStr<N> for T where T: Serializable<N> {}
