@@ -44,6 +44,6 @@ pub trait DeserializableSlice<const N: usize>: Serializable<N> {
     }
 }
 
-// Implements automatically [`DeserializableSlice`] for any type that implements
+// Auto trait [`DeserializableSlice`] for any type that implements
 // [`Serializable`]
 impl<T, const N: usize> DeserializableSlice<N> for T where T: Serializable<N> {}
