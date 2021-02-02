@@ -50,6 +50,36 @@ mod from_bytes {
 
         assert!(beef.is_ok(), "Structure created without error");
     }
+
+    #[test]
+    fn mutable_bigger_and_wrong_buffer() {
+        let mut bytes = &[0xbe, 0xef, 0x10, 0x20][..];
+        let beef = Beef::from_slice_mut(&mut bytes);
+
+        assert!(beef.is_ok(), "Structure created without error");
+        assert_eq!(bytes, [0x10, 0x20], "Buffer Consumed");
+
+        let beef = Beef::from_slice_mut(&mut bytes);
+        let result = matches!(beef, Err(BeefError::InvalidBytes));
+
+        assert!(result, "Invalid representation passed");
+        assert!(bytes.is_empty(), "Buffer Consumed");
+    }
+
+    #[test]
+    fn mutable_bigger_and_not_enough_buffer() {
+        let mut bytes = &[0xbe, 0xef, 0x10][..];
+        let beef = Beef::from_slice_mut(&mut bytes);
+
+        assert!(beef.is_ok(), "Structure created without error");
+        assert_eq!(bytes, [0x10], "Buffer Consumed");
+
+        let beef = Beef::from_slice_mut(&mut bytes);
+        let result = matches!(beef, Err(BeefError::UnexpectedEof));
+
+        assert!(result, "Not enough bytes to parse");
+        assert_eq!(bytes, [0x10], "Buffer is not consumed");
+    }
 }
 
 mod to_bytes {
