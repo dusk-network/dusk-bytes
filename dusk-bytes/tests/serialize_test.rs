@@ -7,7 +7,7 @@
 mod common;
 use common::{Beef, BeefError};
 
-use dusk_bytes::{DeserializableSlice, Serializable};
+use dusk_bytes::{DeserializableSlice, Error, Serializable};
 
 #[test]
 fn expected_size() {
@@ -80,6 +80,91 @@ mod from_bytes {
         assert!(result, "Not enough bytes to parse");
         assert_eq!(bytes, [0x10], "Buffer is not consumed");
     }
+
+    #[test]
+    fn primitive_types() -> Result<(), Error> {
+        assert_eq!(0x0102_u16, u16::from_bytes(&[0x02, 0x01])?);
+        assert_eq!(0x01020304_u32, u32::from_bytes(&[0x04, 0x03, 0x02, 0x01])?);
+        assert_eq!(
+            0x0102030405060708_u64,
+            u64::from_bytes(&[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01])?
+        );
+        assert_eq!(
+            0x0102030405060708090a0b0c0d0e0f10_u128,
+            u128::from_bytes(&[
+                0x10, 0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08, 0x07,
+                0x06, 0x05, 0x04, 0x03, 0x02, 0x01
+            ])?
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn primitive_types_from_reader() -> Result<(), Error> {
+        let mut buffer = &[
+            0x02, 0x01, 0x04, 0x03, 0x02, 0x01, 0x08, 0x07, 0x06, 0x05, 0x04,
+            0x03, 0x02, 0x01, 0x10, 0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09,
+            0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01,
+        ][..];
+
+        assert_eq!(0x0102_u16, u16::from_reader(&mut buffer)?);
+        assert_eq!(0x01020304_u32, u32::from_reader(&mut buffer)?);
+        assert_eq!(0x0102030405060708_u64, u64::from_reader(&mut buffer)?);
+        assert_eq!(
+            0x0102030405060708090a0b0c0d0e0f10_u128,
+            u128::from_reader(&mut buffer)?
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn primitive_types_buffer_too_small() {
+        assert!(
+            matches!(
+                u16::from_slice(&[0x01]),
+                Err(Error::BadLength {
+                    found: 1,
+                    expected: 2
+                })
+            ),
+            "Not enough bytes to parse"
+        );
+
+        assert!(
+            matches!(
+                u32::from_slice(&[0x01, 0x02]),
+                Err(Error::BadLength {
+                    found: 2,
+                    expected: 4
+                })
+            ),
+            "Not enough bytes to parse"
+        );
+
+        assert!(
+            matches!(
+                u64::from_slice(&[]),
+                Err(Error::BadLength {
+                    found: 0,
+                    expected: 8
+                })
+            ),
+            "Not enough bytes to parse"
+        );
+
+        assert!(
+            matches!(
+                u128::from_slice(&[0x01, 0x02, 0x03]),
+                Err(Error::BadLength {
+                    found: 3,
+                    expected: 16
+                })
+            ),
+            "Not enough bytes to parse"
+        );
+    }
 }
 
 mod to_bytes {
@@ -90,6 +175,23 @@ mod to_bytes {
         let beef = Beef {};
 
         assert_eq!(beef.to_bytes(), [0xbe, 0xef]);
+    }
+
+    #[test]
+    fn primitive_types() {
+        assert_eq!(0x0102_u16.to_bytes(), [0x02, 0x01]);
+        assert_eq!(0x01020304_u32.to_bytes(), [0x04, 0x03, 0x02, 0x01]);
+        assert_eq!(
+            0x0102030405060708_u64.to_bytes(),
+            [0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01]
+        );
+        assert_eq!(
+            0x0102030405060708090a0b0c0d0e0f10_u128.to_bytes(),
+            [
+                0x10, 0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08, 0x07,
+                0x06, 0x05, 0x04, 0x03, 0x02, 0x01
+            ]
+        );
     }
 }
 
