@@ -16,6 +16,6 @@ mod serialize;
 
 pub use errors::{BadLength, Error, InvalidChar};
 pub use parse::ParseHexStr;
-pub use serialize::{DeserializableSlice, Serializable};
+pub use serialize::{DeserializableSlice, Read, Serializable, Write};
 
 pub use derive_hex::{Hex, HexDebug};

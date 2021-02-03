@@ -222,3 +222,48 @@ mod functions {
         assert_eq!(info, "Size: 2, Bytes: [190, 239]");
     }
 }
+
+mod buffers {
+    use super::*;
+
+    #[test]
+    fn write_buffer() -> Result<(), Error> {
+        use dusk_bytes::Write;
+
+        let mut buffer = [0u8; Beef::SIZE * 2 + 1];
+        let beef = Beef {};
+
+        let mut writer = &mut buffer[..];
+        writer.write(&beef.to_bytes())?;
+        writer.write(&beef.to_bytes())?;
+
+        assert_eq!(writer.len(), 1, "Writer consumed");
+        assert_eq!(&buffer, &[0xbe, 0xef, 0xbe, 0xef, 0x0], "Buffer written");
+
+        Ok(())
+    }
+
+    #[test]
+    fn source_buffer_too_small() -> Result<(), Error> {
+        use dusk_bytes::Write;
+
+        let mut buffer = [0u8; Beef::SIZE + 1];
+        let beef = Beef {};
+
+        let mut writer = &mut buffer[..];
+        writer.write(&beef.to_bytes())?;
+
+        assert!(
+            matches!(
+                writer.write(&beef.to_bytes()),
+                Err(Error::BadLength {
+                    found: 1,
+                    expected: 2
+                })
+            ),
+            "Dest buffer too small"
+        );
+
+        Ok(())
+    }
+}
