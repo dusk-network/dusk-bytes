@@ -11,6 +11,7 @@
 
 mod errors;
 mod parse;
+mod primitive;
 mod serialize;
 
 pub use errors::{BadLength, Error, InvalidChar};
