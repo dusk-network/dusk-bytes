@@ -53,7 +53,7 @@ pub trait DeserializableSlice<const N: usize>: Serializable<N> {
     {
         let mut bytes = [0u8; N];
         buf.read(&mut bytes)
-            .map_err(|_| Self::Error::bad_length(buf.size(), N))?;
+            .map_err(|_| Self::Error::bad_length(buf.capacity(), N))?;
 
         Self::from_bytes(&bytes)
     }
@@ -63,14 +63,25 @@ pub trait DeserializableSlice<const N: usize>: Serializable<N> {
 // [`Serializable`]
 impl<T, const N: usize> DeserializableSlice<N> for T where T: Serializable<N> {}
 
+// The `Read` trait allows for reading bytes from a source.
+///
+/// Implementors of the `Read` trait are called 'readers'.
+///
+/// Readers are defined by one required method, [`read()`]. Each call to
+/// [`read()`] will attempt to pull bytes from this source into a provided
+/// buffer.
 pub trait Read {
-    fn size(&self) -> usize;
+    /// Returns the number of elements the Reader can hold.
+    fn capacity(&self) -> usize;
+
+    /// Pull some bytes from this source into the specified buffer, returning
+    /// how many bytes were read.
     fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error>;
 }
 
 impl Read for &[u8] {
     #[inline]
-    fn size(&self) -> usize {
+    fn capacity(&self) -> usize {
         self.len()
     }
 
@@ -91,6 +102,35 @@ impl Read for &[u8] {
             buf[..amt].copy_from_slice(a);
         }
 
+        *self = b;
+        Ok(amt)
+    }
+}
+
+// A trait for objects which are byte-oriented sinks.
+///
+/// Implementors of the `Write` trait are sometimes called 'writers'.
+///
+/// Writers are defined by one required method, [`write()`].
+pub trait Write {
+    /// Write a buffer into this writer, returning how many bytes were written.
+    ///
+    /// This function will attempt to write the entire contents of `buf`, but
+    /// the entire write may not succeed, or the write may also generate an
+    /// error.
+    fn write(&mut self, buf: &[u8]) -> Result<usize, Error>;
+}
+
+impl Write for &mut [u8] {
+    #[inline]
+    fn write(&mut self, buf: &[u8]) -> Result<usize, Error> {
+        if buf.len() > self.len() {
+            return Err(Error::bad_length(self.len(), buf.len()));
+        }
+        let amt = buf.len();
+
+        let (a, b) = core::mem::replace(self, &mut []).split_at_mut(amt);
+        a.copy_from_slice(&buf[..amt]);
         *self = b;
         Ok(amt)
     }
