@@ -4,18 +4,16 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
-#![feature(external_doc)]
 #![deny(missing_docs)]
-#![doc(include = "../README.md")]
 #![no_std]
+#![doc = include_str!("../README.md")]
 
 mod errors;
 mod parse;
 mod primitive;
 mod serialize;
 
+pub use derive_hex::{Hex, HexDebug};
 pub use errors::{BadLength, Error, InvalidChar};
 pub use parse::ParseHexStr;
 pub use serialize::{DeserializableSlice, Read, Serializable, Write};
-
-pub use derive_hex::{Hex, HexDebug};
