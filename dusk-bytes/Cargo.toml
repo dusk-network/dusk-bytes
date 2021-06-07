@@ -1,6 +1,6 @@
 [package]
 name = "dusk-bytes"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["zer0 <matteo@dusk.network>"]
 edition = "2018"
 
