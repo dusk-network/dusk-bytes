@@ -39,3 +39,18 @@ fn parse_wrong_chars() {
         "Expected parse failing because invalid bytes for Beef"
     )
 }
+
+mod constant {
+    use dusk_bytes::hex;
+
+    const BEEF: [u8; 2] = hex(b"beef");
+    const BEEF_SMALL: [u8; 1] = hex(b"beef");
+    const BEEF_BIG: [u8; 3] = hex(b"beef");
+
+    #[test]
+    fn const_parse_correct_chars() {
+        assert_eq!(BEEF, [0xbe, 0xef]);
+        assert_eq!(BEEF_SMALL, [0xbe]);
+        assert_eq!(BEEF_BIG, [0xbe, 0xef, 0x0]);
+    }
+}

@@ -7,6 +7,7 @@
 #![deny(missing_docs)]
 #![no_std]
 #![doc = include_str!("../README.md")]
+#![feature(const_panic)]
 
 mod errors;
 mod parse;
@@ -15,5 +16,5 @@ mod serialize;
 
 pub use derive_hex::{Hex, HexDebug};
 pub use errors::{BadLength, Error, InvalidChar};
-pub use parse::ParseHexStr;
+pub use parse::{ParseHexStr, hex};
 pub use serialize::{DeserializableSlice, Read, Serializable, Write};
