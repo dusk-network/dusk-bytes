@@ -38,7 +38,7 @@ pub trait DeserializableSlice<const N: usize>: Serializable<N> {
             Err(Self::Error::bad_length(buf.len(), N))
         } else {
             let mut bytes = [0u8; N];
-            (&mut bytes[..N]).copy_from_slice(&buf[..N]);
+            bytes[..N].copy_from_slice(&buf[..N]);
             Self::from_bytes(&bytes)
         }
     }
@@ -129,7 +129,7 @@ impl Write for &mut [u8] {
         }
         let amt = buf.len();
 
-        let (a, b) = core::mem::replace(self, &mut []).split_at_mut(amt);
+        let (a, b) = core::mem::take(self).split_at_mut(amt);
         a.copy_from_slice(&buf[..amt]);
         *self = b;
         Ok(amt)
