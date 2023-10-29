@@ -22,7 +22,14 @@ macro_rules! impl_serializable {
     };
 }
 
+impl_serializable!(u8);
 impl_serializable!(u16);
 impl_serializable!(u32);
 impl_serializable!(u64);
 impl_serializable!(u128);
+
+impl_serializable!(i8);
+impl_serializable!(i16);
+impl_serializable!(i32);
+impl_serializable!(i64);
+impl_serializable!(i128);
