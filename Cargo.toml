@@ -3,3 +3,4 @@ members = [
     "derive-hex",
     "dusk-bytes"
 ]
+resolver = "2"
