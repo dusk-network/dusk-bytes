@@ -14,6 +14,7 @@ pub struct Beef {}
 pub enum BeefError {
     InvalidBytes,
     UnexpectedEof,
+    #[allow(dead_code)]
     CharNotValid(char, usize),
 }
 

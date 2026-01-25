@@ -99,30 +99,22 @@ Both derives expect your type to expose a `to_bytes()` method (which the
 [`Serializable`] trait already provides).
 
 ```rust
-use dusk_bytes::{HexDebug, Serializable};
+use dusk_bytes::HexDebug;
 
 #[derive(Copy, Clone, HexDebug)]
-struct Tag(u16);
+struct IdPrefix([u8; 4]);
 
-impl Serializable<2> for Tag {
-    type Error = dusk_bytes::Error;
-
-    fn from_bytes(buf: &[u8; 2]) -> Result<Self, Self::Error> {
-        Ok(Self(u16::from_le_bytes(*buf)))
-    }
-
-    fn to_bytes(&self) -> [u8; 2] {
-        self.0.to_le_bytes()
+impl IdPrefix {
+    pub fn to_bytes(&self) -> [u8; 4] {
+        self.0
     }
 }
 
-let t = Tag(0xBEEF);
-assert_eq!(format!("{:x}", t), "efbe");
-assert_eq!(format!("{:#x}", t), "0xefbe");
+let p = IdPrefix([0xde, 0xad, 0xbe, 0xef]);
+assert_eq!(format!("{:x}", p), "deadbeef");
+assert_eq!(format!("{:#x}", p), "0xdeadbeef");
+assert_eq!(format!("{:x?}", p), "deadbeef");
 ```
-
-Note the byte order in the output: the example above uses little-endian
-serialization.
 
 ## Readers and writers
 

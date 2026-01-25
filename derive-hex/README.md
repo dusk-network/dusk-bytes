@@ -19,21 +19,25 @@ Both derives format the output by iterating over `self.to_bytes()` and writing e
 ```rust
 use derive_hex::HexDebug;
 
-#[derive(HexDebug)]
-struct Tag(u16);
+#[derive(Copy, Clone, PartialEq, Eq, HexDebug)]
+struct IdPrefix([u8; 4]);
 
-impl Tag {
+impl IdPrefix {
     // The derives only require a `to_bytes()` method.
-    pub fn to_bytes(&self) -> [u8; 2] {
-        self.0.to_le_bytes()
+    pub fn to_bytes(&self) -> [u8; 4] {
+        self.0
     }
 }
 
-let t = Tag(0xBEEF);
-assert_eq!(format!("{:x}", t), "efbe");
-assert_eq!(format!("{:#x}", t), "0xefbe");
-assert_eq!(format!("{:X}", t), "EFBE");
-assert_eq!(format!("{:x?}", t), "efbe");
+let p = IdPrefix([0xde, 0xad, 0xbe, 0xef]);
+
+assert_eq!(format!("{:x}", p), "deadbeef");
+assert_eq!(format!("{:#x}", p), "0xdeadbeef");
+assert_eq!(format!("{:X}", p), "DEADBEEF");
+
+// `HexDebug` also wires debug formatter flags (`{:x?}` / `{:X?}`) to hex.
+assert_eq!(format!("{:x?}", p), "deadbeef");
+assert_eq!(format!("{:#X?}", p), "0xDEADBEEF");
 ```
 
 ## License

@@ -31,13 +31,13 @@ pub trait ParseHexStr<const N: usize>: Serializable<N> {
             let n: u8 = match (val(s[i]), val(s[i + 1])) {
                 (Some(h), Some(l)) => (h << 4) + l,
                 (None, _) => {
-                    return Err(Self::Error::invalid_char(s[i].into(), i))
+                    return Err(Self::Error::invalid_char(s[i].into(), i));
                 }
                 (_, None) => {
                     return Err(Self::Error::invalid_char(
                         s[i + 1].into(),
                         i + 1,
-                    ))
+                    ));
                 }
             };
             bytes[i / 2] = n;
