@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Update to rust edition = "2024" and version = "1.85"
+
 ## [0.1.2] - 2021-07-15
 
 ### Fixed
