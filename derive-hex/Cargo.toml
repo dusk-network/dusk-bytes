@@ -9,7 +9,7 @@ readme = "README.md"
 
 repository = "https://github.com/dusk-network/dusk-bytes"
 keywords = ["hex", "no_std", "formatting"]
-categories =["No standard library", "Encoding"]
+categories = ["no-std", "encoding"]
 description = "A simple companion macro for dusk-bytes crate"
 license = "MPL-2.0"
 
