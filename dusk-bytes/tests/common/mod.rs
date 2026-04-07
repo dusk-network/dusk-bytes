@@ -4,9 +4,7 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
-use dusk_bytes::{BadLength, InvalidChar, Serializable};
-
-use dusk_bytes::HexDebug;
+use dusk_bytes::{BadLength, HexDebug, InvalidChar, Serializable};
 #[derive(HexDebug)]
 pub struct Beef {}
 

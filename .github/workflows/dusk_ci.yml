@@ -1,16 +1,26 @@
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - main
 
 name: Continuous integration
 
 jobs:
-  code_analysis:
-    name: Code Analysis
-    uses: dusk-network/.github/.github/workflows/code-analysis.yml@main
-
-  dusk_analysis:
-    name: Dusk Analyzer
-    uses: dusk-network/.github/.github/workflows/dusk-analysis.yml@main
+  code-quality:
+    name: Code quality
+    uses: dusk-network/.github/.github/workflows/run-make.yml@main
+    with:
+      make_target: cq
 
   test:
-    name: Tests
-    uses: dusk-network/.github/.github/workflows/run-tests.yml@main
+    name: Run tests
+    uses: dusk-network/.github/.github/workflows/run-make.yml@main
+    with:
+      make_target: test
+
+  no-std:
+    name: Run no-std tests
+    uses: dusk-network/.github/.github/workflows/run-make.yml@main
+    with:
+      make_target: no-std

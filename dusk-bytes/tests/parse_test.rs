@@ -6,7 +6,6 @@
 
 mod common;
 use common::{Beef, BeefError};
-
 use dusk_bytes::ParseHexStr;
 
 #[test]

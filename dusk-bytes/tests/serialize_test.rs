@@ -5,10 +5,10 @@
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
 mod common;
-use common::{Beef, BeefError};
-
-use dusk_bytes::{DeserializableSlice, Error, Serializable};
 use std::fmt::Debug;
+
+use common::{Beef, BeefError};
+use dusk_bytes::{DeserializableSlice, Error, Serializable};
 
 #[test]
 fn expected_size() {
