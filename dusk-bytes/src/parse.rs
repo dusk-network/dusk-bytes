@@ -53,8 +53,22 @@ pub trait ParseHexStr<const N: usize>: Serializable<N> {
 /// (e.g `[0xfe, 0x12]`); if a bigger destination buffer is provided, it will
 /// be padded with zeroes (e.g. `[0xfe, 0x12, 0xc6, 0x0, 0x0])
 ///
-/// If an invalid character is given, it will panic at compile time.
+/// The input length must be even. At runtime, an odd length or an invalid
+/// character in the portion consumed to fill the destination causes a panic.
+/// When the function is evaluated in a constant context, the same panic is
+/// reported during compilation.
+///
+/// ```compile_fail
+/// use dusk_bytes::hex;
+///
+/// // Fails during const evaluation because the input length is odd.
+/// const ODD: [u8; 1] = hex::<3, 1>(b"abc");
+/// ```
 pub const fn hex<const N: usize, const M: usize>(bytes: &[u8; N]) -> [u8; M] {
+    if N % 2 != 0 {
+        panic!("hex(): input length must be even");
+    }
+
     let mut buffer = [0u8; M];
 
     let mut i = 0;

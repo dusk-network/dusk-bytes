@@ -45,11 +45,43 @@ mod constant {
     const BEEF: [u8; 2] = hex(b"beef");
     const BEEF_SMALL: [u8; 1] = hex(b"beef");
     const BEEF_BIG: [u8; 3] = hex(b"beef");
+    const BEEF_EMPTY: [u8; 0] = hex(b"beef");
+    const TRUNCATED_INVALID_SUFFIX: [u8; 1] = hex(b"00gg");
+    const EMPTY: [u8; 0] = hex(b"");
+    const EMPTY_BIG: [u8; 2] = hex(b"");
 
     #[test]
     fn const_parse_correct_chars() {
         assert_eq!(BEEF, [0xbe, 0xef]);
         assert_eq!(BEEF_SMALL, [0xbe]);
         assert_eq!(BEEF_BIG, [0xbe, 0xef, 0x0]);
+        assert_eq!(BEEF_EMPTY, []);
+        assert_eq!(TRUNCATED_INVALID_SUFFIX, [0x0]);
+        assert_eq!(EMPTY, []);
+        assert_eq!(EMPTY_BIG, [0x0, 0x0]);
+    }
+
+    #[test]
+    #[should_panic(expected = "hex(): input length must be even")]
+    fn reject_odd_length() {
+        let _: [u8; 1] = hex(b"f");
+    }
+
+    #[test]
+    #[should_panic(expected = "hex(): input length must be even")]
+    fn reject_odd_length_with_zero_size_destination() {
+        let _: [u8; 0] = hex(b"f");
+    }
+
+    #[test]
+    #[should_panic(expected = "hex(): input length must be even")]
+    fn reject_truncated_odd_length() {
+        let _: [u8; 1] = hex(b"abc");
+    }
+
+    #[test]
+    #[should_panic(expected = "hex(): failed to parse the input as hex number")]
+    fn reject_invalid_char() {
+        let _: [u8; 1] = hex(b"0g");
     }
 }
