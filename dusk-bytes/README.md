@@ -72,10 +72,11 @@ characters per byte).
 - If a non-hex character is found, it returns an `InvalidChar` error.
 - If the string is longer, extra characters are ignored.
 
-### Compile-time: `hex()`
+### Const-capable: `hex()`
 
 `hex()` is a `const fn` that parses an ASCII hex byte string like
-`b"deadbeef"` into a byte array.
+`b"deadbeef"` into a byte array. It can be called at runtime or evaluated in a
+constant context.
 
 ```rust
 use dusk_bytes::hex;
@@ -84,8 +85,12 @@ const MAGIC: [u8; 4] = hex(b"deadbeef");
 assert_eq!(MAGIC, [0xde, 0xad, 0xbe, 0xef]);
 ```
 
-The input byte string must have an even length (two hex digits per output
-byte). Invalid characters cause a compile-time panic during const evaluation.
+The input byte string must have an even length (two hex digits per byte). An
+odd trailing character is rejected even if the destination is already full;
+it is not ignored like extra input to `from_hex_str`. An odd input length or
+an invalid character in the portion consumed to fill the destination panics
+at runtime. When `hex()` is evaluated in a constant context, the same panic is
+reported during compilation.
 
 ## Hex formatting: `Hex` and `HexDebug`
 
