@@ -8,7 +8,7 @@ mod common;
 use std::fmt::Debug;
 
 use common::{Beef, BeefError};
-use dusk_bytes::{DeserializableSlice, Error, Serializable};
+use dusk_bytes::{DeserializableSlice, Error, Read, Serializable};
 
 #[test]
 fn expected_size() {
@@ -17,6 +17,78 @@ fn expected_size() {
 
 mod from_bytes {
     use super::*;
+
+    struct ChunkedReader<'a> {
+        bytes: &'a [u8],
+        chunk_size: usize,
+    }
+
+    impl<'a> ChunkedReader<'a> {
+        fn new(bytes: &'a [u8], chunk_size: usize) -> Self {
+            Self { bytes, chunk_size }
+        }
+    }
+
+    impl Read for ChunkedReader<'_> {
+        fn capacity(&self) -> usize {
+            self.bytes.len()
+        }
+
+        fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error> {
+            let amount = buf.len().min(self.chunk_size).min(self.bytes.len());
+            buf[..amount].copy_from_slice(&self.bytes[..amount]);
+            self.bytes = &self.bytes[amount..];
+            Ok(amount)
+        }
+    }
+
+    struct InvalidReader;
+
+    impl Read for InvalidReader {
+        fn capacity(&self) -> usize {
+            0
+        }
+
+        fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error> {
+            Ok(buf.len() + 1)
+        }
+    }
+
+    struct FailingReader {
+        error: Error,
+        read_once: bool,
+        remaining: usize,
+    }
+
+    impl FailingReader {
+        fn new(error: Error, remaining: usize) -> Self {
+            Self {
+                error,
+                read_once: false,
+                remaining,
+            }
+        }
+    }
+
+    impl Read for FailingReader {
+        fn capacity(&self) -> usize {
+            if self.read_once {
+                self.remaining
+            } else {
+                self.remaining + 1
+            }
+        }
+
+        fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error> {
+            if self.read_once {
+                Err(self.error)
+            } else {
+                buf[0] = 0x04;
+                self.read_once = true;
+                Ok(1)
+            }
+        }
+    }
 
     #[test]
     fn correct_buffer() {
@@ -100,6 +172,79 @@ mod from_bytes {
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn from_reader_fills_buffer_across_short_reads() -> Result<(), Error> {
+        let mut reader = ChunkedReader::new(&[0x04, 0x03, 0x02, 0x01, 0xff], 1);
+
+        assert_eq!(0x01020304_u32, u32::from_reader(&mut reader)?);
+        assert_eq!(reader.bytes, &[0xff]);
+
+        Ok(())
+    }
+
+    #[test]
+    fn from_reader_rejects_early_eof() {
+        let mut reader = ChunkedReader::new(&[0x04, 0x03], 1);
+
+        assert_eq!(
+            u32::from_reader(&mut reader),
+            Err(Error::BadLength {
+                found: 2,
+                expected: 4
+            })
+        );
+        assert!(reader.bytes.is_empty());
+    }
+
+    #[test]
+    fn from_reader_rejects_invalid_read_count() {
+        assert_eq!(
+            u32::from_reader(&mut InvalidReader),
+            Err(Error::BadLength {
+                found: 0,
+                expected: 4
+            })
+        );
+    }
+
+    #[test]
+    fn from_reader_reports_reader_capacity_on_error() {
+        let cases = [
+            (Error::InvalidData, 0, 1),
+            (
+                Error::BadLength {
+                    found: 1000,
+                    expected: 3,
+                },
+                2,
+                3,
+            ),
+        ];
+
+        for (error, remaining, found) in cases {
+            let mut reader = FailingReader::new(error, remaining);
+            assert_eq!(
+                u32::from_reader(&mut reader),
+                Err(Error::BadLength { found, expected: 4 })
+            );
+        }
+    }
+
+    #[test]
+    fn slice_reader_preserves_input_on_early_eof() {
+        let input = [0x04, 0x03];
+        let mut reader = &input[..];
+
+        assert_eq!(
+            u32::from_reader(&mut reader),
+            Err(Error::BadLength {
+                found: 2,
+                expected: 4
+            })
+        );
+        assert_eq!(reader, input);
     }
 
     #[test]

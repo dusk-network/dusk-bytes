@@ -43,8 +43,11 @@ pub trait DeserializableSlice<const N: usize>: Serializable<N> {
         }
     }
 
-    /// Deserialize the type reading the bytes from a reader.
-    /// The bytes read are removed from the reader.
+    /// Deserialize the type by reading exactly `N` bytes from a reader.
+    /// Successful short reads are retried. If the reader makes no progress or
+    /// returns an error before filling the buffer, a bad-length error is
+    /// returned. The bytes read are removed from the reader, including bytes
+    /// read before an error or end of input.
     fn from_reader<R>(buf: &mut R) -> Result<Self, Self::Error>
     where
         R: Read,
@@ -52,8 +55,20 @@ pub trait DeserializableSlice<const N: usize>: Serializable<N> {
         Self::Error: BadLength,
     {
         let mut bytes = [0u8; N];
-        buf.read(&mut bytes)
-            .map_err(|_| Self::Error::bad_length(buf.capacity(), N))?;
+        let mut filled = 0;
+
+        while filled < N {
+            let remaining = N - filled;
+            match buf.read(&mut bytes[filled..]) {
+                Ok(0) => return Err(Self::Error::bad_length(filled, N)),
+                Ok(read) if read <= remaining => filled += read,
+                Ok(_) => return Err(Self::Error::bad_length(filled, N)),
+                Err(_) => {
+                    let found = filled.saturating_add(buf.capacity());
+                    return Err(Self::Error::bad_length(found, N));
+                }
+            }
+        }
 
         Self::from_bytes(&bytes)
     }
@@ -71,11 +86,15 @@ impl<T, const N: usize> DeserializableSlice<N> for T where T: Serializable<N> {}
 /// [`read()`] will attempt to pull bytes from this source into a provided
 /// buffer.
 pub trait Read {
-    /// Returns the number of elements the Reader can hold.
+    /// Returns the number of unread bytes remaining in the source.
     fn capacity(&self) -> usize;
 
     /// Pull some bytes from this source into the specified buffer, returning
     /// how many bytes were read.
+    ///
+    /// A successful read of `n` means exactly `n` bytes were written into
+    /// `buf`. It may fill only part of `buf`, but must not report more than
+    /// `buf.len()`. `Ok(0)` means the reader can produce no more bytes.
     fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error>;
 }
 
