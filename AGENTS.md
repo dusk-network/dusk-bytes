@@ -44,8 +44,7 @@ Run `make help` to see all available targets.
 ### Key Design Points
 
 - All serialization is little-endian (see primitive impls).
-- `derive-hex` is a proc-macro crate — it cannot be built for `no_std` targets like `thumbv6m-none-eabi`. The `no-std` Makefile target only builds `dusk-bytes`.
-- No feature flags — both crates expose their full API unconditionally.
+- `derive-hex` is a proc-macro crate — it cannot be built for `no_std` targets like `thumbv6m-none-eabi`. The default `dusk-bytes` `derive` feature re-exports its macros; disabling default features leaves the serialization crate dependency-free. The `no-std` Makefile target builds that minimal configuration.
 
 ## Conventions
 

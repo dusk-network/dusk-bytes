@@ -18,6 +18,7 @@ check: ## Type-check
 
 test: ## Run tests
 	@cargo test --release
+	@cargo test --release -p dusk-bytes --no-default-features
 
 no-std: ## Verify no_std compatibility on bare-metal target
 	@rustup target add thumbv6m-none-eabi 2>/dev/null || true

@@ -4,9 +4,10 @@ This repository is a small Rust workspace containing two crates:
 
 - **`dusk-bytes`**: a `no_std` friendly set of traits for fixed-size
   (de)serialization using const generics, plus hex parsing helpers.
-- **`derive-hex`**: companion derive macros (`Hex`, `HexDebug`) that implement
-  `LowerHex` / `UpperHex` formatting (and optionally `Debug`) for types that
-  expose a `to_bytes()` method (for example types implementing
+- **`derive-hex`**: companion derive macros (`Hex`, `HexDebug`), re-exported by
+  the default `dusk-bytes` `derive` feature, that implement `LowerHex` /
+  `UpperHex` formatting (and optionally `Debug`) for types that expose a
+  `to_bytes()` method (for example types implementing
   `dusk_bytes::Serializable`).
 
 ## Crates
