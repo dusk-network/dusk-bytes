@@ -6,13 +6,13 @@
 
 mod common;
 use common::{Beef, BeefError};
-use dusk_bytes::ParseHexStr;
+use dusk_bytes::{ParseHexStr, Serializable};
 
 #[test]
 fn parse_correct_chars() -> Result<(), BeefError> {
     let beef = Beef::from_hex_str("beef")?;
 
-    assert_eq!(format!("{:x}", beef), "beef");
+    assert_eq!(beef.to_bytes(), [0xbe, 0xef]);
 
     Ok(())
 }

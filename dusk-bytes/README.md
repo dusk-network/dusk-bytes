@@ -8,7 +8,8 @@ A type that can be represented by exactly `N` bytes implements [`Serializable<N>
 - deserialize from slices and byte readers (`DeserializableSlice`).
 - parse hex strings (`ParseHexStr`).
 - parse hex literals at compile time (`hex()`).
-- and format types as hex (`Hex` / `HexDebug`).
+- and, with the default `derive` feature, format types as hex (`Hex` /
+  `HexDebug`).
 
 This crate is used as the foundation for a number of Dusk types where a
 compact, allocation-free byte representation is desirable.
@@ -21,6 +22,18 @@ compact, allocation-free byte representation is desirable.
   `InvalidChar` traits.
 - Built-in `Serializable` implementations for common integer primitives
   (little-endian).
+
+### Cargo features
+
+- `derive` (enabled by default) re-exports the `Hex` and `HexDebug` procedural
+  macros from `derive-hex`.
+
+Consumers that only need serialization and parsing can disable default
+features to keep `dusk-bytes` dependency-free:
+
+```toml
+dusk-bytes = { version = "0.1", default-features = false }
+```
 
 ## Quick start
 
@@ -94,7 +107,8 @@ reported during compilation.
 
 ## Hex formatting: `Hex` and `HexDebug`
 
-`dusk-bytes` re-exports two derive macros from the companion `derive-hex` crate:
+With the default `derive` feature, `dusk-bytes` re-exports two derive macros
+from the companion `derive-hex` crate:
 
 - `#[derive(Hex)]` implements `core::fmt::LowerHex` and `core::fmt::UpperHex`.
 - `#[derive(HexDebug)]` additionally implements `core::fmt::Debug` and formats
@@ -104,6 +118,8 @@ Both derives expect your type to expose a `to_bytes()` method (which the
 [`Serializable`] trait already provides).
 
 ```rust
+# #[cfg(feature = "derive")]
+# {
 use dusk_bytes::HexDebug;
 
 #[derive(Copy, Clone, HexDebug)]
@@ -119,6 +135,7 @@ let p = IdPrefix([0xde, 0xad, 0xbe, 0xef]);
 assert_eq!(format!("{:x}", p), "deadbeef");
 assert_eq!(format!("{:#x}", p), "0xdeadbeef");
 assert_eq!(format!("{:x?}", p), "deadbeef");
+# }
 ```
 
 ## Readers and writers
