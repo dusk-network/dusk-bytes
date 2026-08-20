@@ -13,6 +13,7 @@ mod parse;
 mod primitive;
 mod serialize;
 
+#[cfg(feature = "derive")]
 pub use derive_hex::{Hex, HexDebug};
 pub use errors::{BadLength, Error, InvalidChar};
 pub use parse::{ParseHexStr, hex};
