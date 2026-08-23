@@ -25,7 +25,8 @@ no-std: ## Verify no_std compatibility on bare-metal target
 	@cargo build --no-default-features -p dusk-bytes --target thumbv6m-none-eabi
 
 doc: ## Generate docs
-	@cargo doc --no-deps
+	@RUSTDOCFLAGS="-D warnings" cargo doc --workspace --all-features --no-deps
+	@RUSTDOCFLAGS="-D warnings" cargo doc -p dusk-bytes --no-default-features --no-deps
 
 clean: ## Clean build artifacts
 	@cargo clean

@@ -13,6 +13,12 @@ jobs:
     with:
       make_target: cq
 
+  documentation:
+    name: Build documentation
+    uses: dusk-network/.github/.github/workflows/run-make.yml@main
+    with:
+      make_target: doc
+
   test:
     name: Run tests
     uses: dusk-network/.github/.github/workflows/run-make.yml@main
