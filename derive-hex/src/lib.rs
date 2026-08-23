@@ -17,14 +17,12 @@ pub fn derive_hex(item: TokenStream) -> TokenStream {
     (quote! {
         impl core::fmt::LowerHex for #ident {
             fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-                let bytes = self.to_bytes();
-
                 if f.alternate() {
                     write!(f, "0x")?
                 }
 
-                for byte in &bytes[..] {
-                    write!(f, "{:02x}", &byte)?
+                for byte in self.to_bytes() {
+                    write!(f, "{byte:02x}")?
                 }
 
                 Ok(())
@@ -33,14 +31,12 @@ pub fn derive_hex(item: TokenStream) -> TokenStream {
 
         impl core::fmt::UpperHex for #ident {
             fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-                let bytes = self.to_bytes();
-
                 if f.alternate() {
                     write!(f, "0x")?
                 }
 
-                for byte in &bytes[..] {
-                    write!(f, "{:02X}", &byte)?
+                for byte in self.to_bytes() {
+                    write!(f, "{byte:02X}")?
                 }
 
                 Ok(())
@@ -59,22 +55,13 @@ pub fn derive_hex_debug(item: TokenStream) -> TokenStream {
     let dbg: TokenStream = (quote! {
     impl core::fmt::Debug for #ident {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-            // Once we format an object using the debug notation (e.g. `{:x?}`)
-            // there is absolutely NO WAY to detect the flag for the lowerhex
-            // or upperhex, and therefore forwarding to the relevant formatter.
-            // Two methods for this purpose exists, but they're not exposed
-            // because they didn't agree on a name yet, see:
+            // `Formatter` does not publicly expose the debug-hex case. Bit 5 is
+            // `FlagV1::DebugUpperHex` in `core`:
             // <https://github.com/rust-lang/rust/blob/90442458ac46b1d5eed752c316da25450f67285b/library/core/src/fmt/mod.rs#L1817-L1825>
-            //
-            // Therefore the only way is using the deprecated method `flags`,
-            // implementing the same logic of the forementioned methods.
-
-            // We also do not have access to the `FlagV1` enum since it's
-            // private.
-            let FlagV1_DebugUpperHex = 5_u32;
+            const DEBUG_UPPER_HEX: u32 = 1 << 5;
 
             #[allow(deprecated)]
-            if f.flags() & (1 << FlagV1_DebugUpperHex) !=0 {
+            if f.flags() & DEBUG_UPPER_HEX != 0 {
                 core::fmt::UpperHex::fmt(self, f)
             } else { // LowerHex is always the default for debug
                 core::fmt::LowerHex::fmt(self, f)

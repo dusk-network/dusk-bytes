@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Simplify generated formatting and remove the unused `proc-macro2` dependency
+  [#55]
 - Update Syn to 3 [#53]
 - Raise the MSRV to Rust 1.96.1 [#51]
 
@@ -44,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#45]: https://github.com/dusk-network/dusk-bytes/issues/45
 [#51]: https://github.com/dusk-network/dusk-bytes/issues/51
 [#53]: https://github.com/dusk-network/dusk-bytes/issues/53
+[#55]: https://github.com/dusk-network/dusk-bytes/issues/55
 [unreleased]: https://github.com/dusk-network/dusk-bytes/compare/derive-hex-0.1.2...HEAD
 [0.1.2]: https://github.com/dusk-network/dusk-bytes/releases/tag/derive-hex-0.1.2
 [0.1.1]: https://github.com/dusk-network/dusk-bytes/releases/tag/derive-hex-0.1.1
