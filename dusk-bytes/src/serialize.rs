@@ -6,7 +6,8 @@
 
 use super::errors::{BadLength, Error};
 
-/// The core trait used to implement [`from_bytes`] and [`to_bytes`]
+/// The core trait used to implement [`Serializable::from_bytes`] and
+/// [`Serializable::to_bytes`].
 pub trait Serializable<const N: usize> {
     /// The size of
     const SIZE: usize = N;
@@ -22,8 +23,8 @@ pub trait Serializable<const N: usize> {
     fn to_bytes(&self) -> [u8; N];
 }
 
-/// An optional trait used to implement [`from_slice`] on top of types that
-/// uses [`Serializable`] trait.
+/// An optional trait used to implement [`DeserializableSlice::from_slice`] on
+/// top of types that use the [`Serializable`] trait.
 /// The default implementation makes use of [`Serializable`] trait to provide
 /// the necessary deserialization functionality without additional code from the
 /// consumer.
@@ -82,8 +83,8 @@ impl<T, const N: usize> DeserializableSlice<N> for T where T: Serializable<N> {}
 ///
 /// Implementors of the `Read` trait are called 'readers'.
 ///
-/// Readers are defined by one required method, [`read()`]. Each call to
-/// [`read()`] will attempt to pull bytes from this source into a provided
+/// Readers are defined by one required method, [`Read::read`]. Each call to
+/// [`Read::read`] will attempt to pull bytes from this source into a provided
 /// buffer.
 pub trait Read {
     /// Returns the number of unread bytes remaining in the source.
@@ -130,7 +131,7 @@ impl Read for &[u8] {
 ///
 /// Implementors of the `Write` trait are sometimes called 'writers'.
 ///
-/// Writers are defined by one required method, [`write()`].
+/// Writers are defined by one required method, [`Write::write`].
 pub trait Write {
     /// Write a buffer into this writer, returning how many bytes were written.
     ///
