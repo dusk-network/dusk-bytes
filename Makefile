@@ -13,6 +13,8 @@ cq: ## Run code quality checks (formatting + clippy)
 	@$(MAKE) fmt CHECK=1
 	@$(MAKE) clippy
 
+ci: cq test no-std doc ## Run continuous integration checks
+
 check: ## Type-check
 	@cargo check --all-features
 
@@ -31,4 +33,4 @@ doc: ## Generate docs
 clean: ## Clean build artifacts
 	@cargo clean
 
-.PHONY: help fmt clippy cq check test no-std doc clean
+.PHONY: help fmt clippy cq ci check test no-std doc clean
