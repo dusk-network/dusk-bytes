@@ -4,6 +4,8 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
+#![forbid(unsafe_code)]
+
 use proc_macro::TokenStream;
 use quote::quote;
 
