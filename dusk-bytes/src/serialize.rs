@@ -34,12 +34,9 @@ pub trait DeserializableSlice<const N: usize>: Serializable<N> {
         Self: Sized,
         Self::Error: BadLength,
     {
-        if buf.len() < N {
-            Err(Self::Error::bad_length(buf.len(), N))
-        } else {
-            let mut bytes = [0u8; N];
-            bytes[..N].copy_from_slice(&buf[..N]);
-            Self::from_bytes(&bytes)
+        match buf.first_chunk::<N>() {
+            Some(bytes) => Self::from_bytes(bytes),
+            None => Err(Self::Error::bad_length(buf.len(), N)),
         }
     }
 
