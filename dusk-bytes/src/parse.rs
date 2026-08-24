@@ -65,7 +65,7 @@ pub trait ParseHexStr<const N: usize>: Serializable<N> {
 /// const ODD: [u8; 1] = hex::<3, 1>(b"abc");
 /// ```
 pub const fn hex<const N: usize, const M: usize>(bytes: &[u8; N]) -> [u8; M] {
-    if N % 2 != 0 {
+    if !N.is_multiple_of(2) {
         panic!("hex(): input length must be even");
     }
 
