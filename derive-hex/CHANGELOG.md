@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Raise the MSRV to Rust 1.96.1 [#51]
+
 ### Security
 
 - Forbid unsafe code in `derive-hex` [#45]
@@ -37,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [#10]: https://github.com/dusk-network/dusk-bytes/issues/10
 [#45]: https://github.com/dusk-network/dusk-bytes/issues/45
+[#51]: https://github.com/dusk-network/dusk-bytes/issues/51
 [unreleased]: https://github.com/dusk-network/dusk-bytes/compare/derive-hex-0.1.2...HEAD
 [0.1.2]: https://github.com/dusk-network/dusk-bytes/releases/tag/derive-hex-0.1.2
 [0.1.1]: https://github.com/dusk-network/dusk-bytes/releases/tag/derive-hex-0.1.1
