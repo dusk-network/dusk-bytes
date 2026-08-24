@@ -49,7 +49,7 @@ Run `make help` to see all available targets.
 ## Conventions
 
 - **`no_std`**: Both crates. Do not add `std` dependencies.
-- **Edition 2024**: MSRV 1.85.
+- **Edition 2024**: The workspace uses Rust edition 2024 with MSRV 1.96.1.
 - **Wide downstream impact**: This crate is a dependency of most Dusk repos. Check `Cargo.lock` in downstream repos before releasing. See the Change Propagation table below.
 
 ## Change Propagation
