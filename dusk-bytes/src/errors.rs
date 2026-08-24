@@ -4,33 +4,34 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
-/// Trait to be implemented for the associated  Error used in
-/// [`DeserializableSlice::from_slice`]. The function is called if the slice
-/// given is smaller than the mandatory size for the struct.
+/// Trait implemented by error types used by
+/// [`DeserializableSlice::from_slice`](crate::DeserializableSlice::from_slice).
+/// The method is called when the given slice is shorter than the required size.
 pub trait BadLength {
-    /// Invoked when a buffer of bad length is given to [`from_slice`]
+    /// Invoked when a buffer of bad length is given to
+    /// [`DeserializableSlice::from_slice`](crate::DeserializableSlice::from_slice).
     fn bad_length(found: usize, expected: usize) -> Self;
 }
 
-/// Trait to be implemented for the associated Error used in
-/// [`ParseHexStr::from_hex_str`].
-/// The function is called  if an invalid character is found in the string
-/// slice.
+/// Trait implemented by error types used by
+/// [`ParseHexStr::from_hex_str`](crate::ParseHexStr::from_hex_str).
+/// The method is called when an invalid character is found in the string slice.
 pub trait InvalidChar {
-    /// Invoked when a string slice with a non hex character is is give to
-    /// [`ParseHexStr::from_hex_str`]
+    /// Invoked when a string slice with a non-hex character is given to
+    /// [`ParseHexStr::from_hex_str`](crate::ParseHexStr::from_hex_str).
     fn invalid_char(ch: char, index: usize) -> Self;
 }
 
 /// Dusk Bytes operation error variants
 #[derive(Copy, Debug, Clone, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Error {
-    /// Generic error that can be returned in a [`Deserializable::from_bytes`]
-    /// implementation
+    /// Generic error that can be returned in a
+    /// [`Serializable::from_bytes`](crate::Serializable::from_bytes)
+    /// implementation.
     InvalidData,
     /// Automatically returned from the default implementation of
-    /// [`DeserializableSlice::from_slice`] if the slice given is smaller than
-    /// the mandatory size for the struct.
+    /// [`DeserializableSlice::from_slice`](crate::DeserializableSlice::from_slice)
+    /// if the slice given is smaller than the mandatory size for the struct.
     BadLength {
         /// The slice's length
         found: usize,
@@ -38,8 +39,8 @@ pub enum Error {
         expected: usize,
     },
     /// Automatically returned from the default implementation of
-    /// [`ParseHexStr::from_hex_str`] if an invalid character is found in the
-    /// string slice.
+    /// [`ParseHexStr::from_hex_str`](crate::ParseHexStr::from_hex_str) if an
+    /// invalid character is found in the string slice.
     InvalidChar {
         /// The invalid character found
         ch: char,
