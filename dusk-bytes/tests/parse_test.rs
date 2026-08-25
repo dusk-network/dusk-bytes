@@ -6,7 +6,7 @@
 
 mod common;
 use common::{Beef, BeefError};
-use dusk_bytes::{ParseHexStr, Serializable};
+use dusk_bytes::{Error, ParseHexStr, Serializable};
 
 #[test]
 fn parse_correct_chars() -> Result<(), BeefError> {
@@ -39,6 +39,26 @@ fn parse_wrong_chars() {
     )
 }
 
+#[test]
+fn parse_reports_length_and_low_nibble_errors() {
+    assert_eq!(
+        u16::from_hex_str("bee"),
+        Err(Error::BadLength {
+            found: 3,
+            expected: 4,
+        })
+    );
+    assert_eq!(
+        u8::from_hex_str("0g"),
+        Err(Error::InvalidChar { ch: 'g', index: 1 })
+    );
+}
+
+#[test]
+fn parse_accepts_uppercase_hex() {
+    assert_eq!(u16::from_hex_str("BEEF"), Ok(0xefbe));
+}
+
 mod constant {
     use dusk_bytes::hex;
 
@@ -59,6 +79,18 @@ mod constant {
         assert_eq!(TRUNCATED_INVALID_SUFFIX, [0x0]);
         assert_eq!(EMPTY, []);
         assert_eq!(EMPTY_BIG, [0x0, 0x0]);
+    }
+
+    #[test]
+    fn runtime_matches_const_fixtures() {
+        let input = std::hint::black_box(*b"beef");
+        let exact: [u8; 2] = hex(&input);
+        let truncated: [u8; 1] = hex(&input);
+        let padded: [u8; 3] = hex(&input);
+
+        assert_eq!(exact, BEEF);
+        assert_eq!(truncated, BEEF_SMALL);
+        assert_eq!(padded, BEEF_BIG);
     }
 
     #[test]

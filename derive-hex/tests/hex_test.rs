@@ -20,66 +20,16 @@ impl Beef {
     }
 }
 
-mod display {
-    use super::*;
+#[test]
+fn formatting() {
+    let beef = Beef {};
 
-    #[test]
-    fn lower_hex() {
-        let beef = Beef {};
-
-        assert_eq!(format!("{:x}", beef), "beef");
-    }
-
-    #[test]
-    fn lower_hex_alt() {
-        let beef = Beef {};
-
-        assert_eq!(format!("{:#x}", beef), "0xbeef");
-    }
-
-    #[test]
-    fn upper_hex() {
-        let beef = Beef {};
-
-        assert_eq!(format!("{:X}", beef), "BEEF");
-    }
-
-    #[test]
-    fn upper_hex_alt() {
-        let beef = Beef {};
-
-        assert_eq!(format!("{:#X}", beef), "0xBEEF");
-    }
-}
-
-mod debug {
-    use super::*;
-
-    #[test]
-    fn lower_hex() {
-        let beef = Beef {};
-
-        assert_eq!(format!("{:x?}", beef), "beef");
-    }
-
-    #[test]
-    fn lower_hex_alt() {
-        let beef = Beef {};
-
-        assert_eq!(format!("{:#x?}", beef), "0xbeef");
-    }
-
-    #[test]
-    fn upper_hex() {
-        let beef = Beef {};
-
-        assert_eq!(format!("{:X?}", beef), "BEEF");
-    }
-
-    #[test]
-    fn upper_hex_alt() {
-        let beef = Beef {};
-
-        assert_eq!(format!("{:#X?}", beef), "0xBEEF");
-    }
+    assert_eq!(format!("{:x}", beef), "beef");
+    assert_eq!(format!("{:#x}", beef), "0xbeef");
+    assert_eq!(format!("{:X}", beef), "BEEF");
+    assert_eq!(format!("{:#X}", beef), "0xBEEF");
+    assert_eq!(format!("{:x?}", beef), "beef");
+    assert_eq!(format!("{:#x?}", beef), "0xbeef");
+    assert_eq!(format!("{:X?}", beef), "BEEF");
+    assert_eq!(format!("{:#X?}", beef), "0xBEEF");
 }
