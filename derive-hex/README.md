@@ -10,7 +10,14 @@ where `to_bytes()` is provided by the `Serializable` trait.
 
 `#[derive(Hex)]` implements `core::fmt::LowerHex` (`{:x}` / `{:#x}`) and `core::fmt::UpperHex` (`{:X}` / `{:#X}`).
 
-`#[derive(HexDebug)]` includes everything from `Hex` and additionally implements `core::fmt::Debug` and formats using hex when you use the debug formatter flags (`{:x?}` / `{:#x?}` / `{:X?}` / `{:#X?}`).
+`#[derive(HexDebug)]` includes everything from `Hex` and additionally implements
+`core::fmt::Debug`. Ordinary `{:?}` formatting emits lowercase hexadecimal,
+while `{:X?}` emits uppercase hexadecimal; alternate forms add the `0x` prefix.
+
+Do not derive `Hex` or `HexDebug` for types containing secrets or other
+confidential material. Both derives expose the complete serialized
+representation: `Hex` through hexadecimal formatting such as `{:x}` and
+`HexDebug` additionally through ordinary debug formatting such as `{:?}`.
 
 Both derives format the output by iterating over `self.to_bytes()` and writing each byte as two hexadecimal digits.
 
@@ -35,7 +42,8 @@ assert_eq!(format!("{:x}", p), "deadbeef");
 assert_eq!(format!("{:#x}", p), "0xdeadbeef");
 assert_eq!(format!("{:X}", p), "DEADBEEF");
 
-// `HexDebug` also wires debug formatter flags (`{:x?}` / `{:X?}`) to hex.
+// `HexDebug` also formats ordinary and flagged debug output as hex.
+assert_eq!(format!("{p:?}"), "deadbeef");
 assert_eq!(format!("{:x?}", p), "deadbeef");
 assert_eq!(format!("{:#X?}", p), "0xDEADBEEF");
 ```

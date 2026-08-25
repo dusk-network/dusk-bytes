@@ -4,7 +4,7 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
-use derive_hex::HexDebug;
+use derive_hex::{Hex, HexDebug};
 
 #[derive(HexDebug)]
 struct Beef {}
@@ -20,6 +20,40 @@ impl Beef {
     }
 }
 
+#[derive(Hex)]
+struct GenericHex<T>
+where
+    T: Copy + Into<u8>,
+{
+    value: T,
+}
+
+impl<T> GenericHex<T>
+where
+    T: Copy + Into<u8>,
+{
+    fn to_bytes(&self) -> [u8; 1] {
+        [self.value.into()]
+    }
+}
+
+#[derive(HexDebug)]
+struct GenericHexDebug<T>
+where
+    T: Copy + Into<u8>,
+{
+    value: T,
+}
+
+impl<T> GenericHexDebug<T>
+where
+    T: Copy + Into<u8>,
+{
+    fn to_bytes(&self) -> [u8; 1] {
+        [self.value.into()]
+    }
+}
+
 #[test]
 fn formatting() {
     let beef = Beef {};
@@ -32,4 +66,14 @@ fn formatting() {
     assert_eq!(format!("{:#x?}", beef), "0xbeef");
     assert_eq!(format!("{:X?}", beef), "BEEF");
     assert_eq!(format!("{:#X?}", beef), "0xBEEF");
+}
+
+#[test]
+fn generic_derives_preserve_bounds() {
+    let hex = GenericHex { value: 0xabu8 };
+    let debug = GenericHexDebug { value: 0xcdu8 };
+
+    assert_eq!(format!("{hex:x}"), "ab");
+    assert_eq!(format!("{debug:?}"), "cd");
+    assert_eq!(format!("{debug:X?}"), "CD");
 }
