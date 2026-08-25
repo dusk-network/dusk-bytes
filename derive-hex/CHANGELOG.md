@@ -14,8 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Syn to 3 [#53]
 - Raise the MSRV to Rust 1.96.1 [#51]
 
+### Fixed
+
+- Support generic types in the `Hex` and `HexDebug` derives [#44]
+
 ### Security
 
+- Document that `Hex` and `HexDebug` expose complete serialized values [#44]
 - Forbid unsafe code in `derive-hex` [#45]
 
 ## [0.1.2] - 2021-07-15
@@ -43,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `HexDebug` proc macro
 
 [#10]: https://github.com/dusk-network/dusk-bytes/issues/10
+[#44]: https://github.com/dusk-network/dusk-bytes/issues/44
 [#45]: https://github.com/dusk-network/dusk-bytes/issues/45
 [#51]: https://github.com/dusk-network/dusk-bytes/issues/51
 [#53]: https://github.com/dusk-network/dusk-bytes/issues/53
