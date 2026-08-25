@@ -112,7 +112,12 @@ from the companion `derive-hex` crate:
 
 - `#[derive(Hex)]` implements `core::fmt::LowerHex` and `core::fmt::UpperHex`.
 - `#[derive(HexDebug)]` additionally implements `core::fmt::Debug` and formats
-  the value as hex for `{:x?}` / `{:X?}`.
+  the value as hex for `{:?}` / `{:x?}` / `{:X?}`.
+
+Do not derive `Hex` or `HexDebug` for types containing secrets or other
+confidential material. Both expose the complete `to_bytes()` output: `Hex`
+through hexadecimal formatting such as `{:x}` and `HexDebug` additionally
+through every `Debug` formatting path, including ordinary `{:?}`.
 
 Both derives expect your type to expose a `to_bytes()` method (which the
 [`Serializable`] trait already provides).
@@ -134,6 +139,7 @@ impl IdPrefix {
 let p = IdPrefix([0xde, 0xad, 0xbe, 0xef]);
 assert_eq!(format!("{:x}", p), "deadbeef");
 assert_eq!(format!("{:#x}", p), "0xdeadbeef");
+assert_eq!(format!("{:?}", p), "deadbeef");
 assert_eq!(format!("{:x?}", p), "deadbeef");
 # }
 ```
