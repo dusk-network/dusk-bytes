@@ -86,4 +86,8 @@ Examples:
 
 ### Changelog
 
-`derive-hex` has a `CHANGELOG.md`. Add entries under `[Unreleased]` using [keep-a-changelog](https://keepachangelog.com/) format. If a change traces to a GitHub issue, reference it as a link: `[#42](https://github.com/dusk-network/dusk-bytes/issues/42)`. Only link to GitHub issues — do not reference any other tracking system.
+Both crates have a `CHANGELOG.md`. Add entries to the affected crate under
+`[Unreleased]` using [Keep a Changelog](https://keepachangelog.com/) format. If
+a change traces to a GitHub issue, reference it as a link:
+`[#42](https://github.com/dusk-network/dusk-bytes/issues/42)`. Only link to
+GitHub issues — do not reference any other tracking system.
