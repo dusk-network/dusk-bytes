@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-08-25
+
 ### Added
 
 - Add a default-on `derive` feature and allow dependency-free builds with
@@ -116,7 +118,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#45]: https://github.com/dusk-network/dusk-bytes/issues/45
 [#46]: https://github.com/dusk-network/dusk-bytes/issues/46
 [#51]: https://github.com/dusk-network/dusk-bytes/issues/51
-[unreleased]: https://github.com/dusk-network/dusk-bytes/compare/dusk-bytes-0.1.8-rc.0...HEAD
+[unreleased]: https://github.com/dusk-network/dusk-bytes/compare/dusk-bytes-0.1.8...HEAD
+[0.1.8]: https://github.com/dusk-network/dusk-bytes/compare/dusk-bytes-0.1.8-rc.0...dusk-bytes-0.1.8
 [0.1.8-rc.0]: https://github.com/dusk-network/dusk-bytes/compare/dusk-bytes-0.1.7...dusk-bytes-0.1.8-rc.0
 [0.1.7]: https://github.com/dusk-network/dusk-bytes/compare/dusk-bytes-0.1.6...dusk-bytes-0.1.7
 [0.1.6]: https://github.com/dusk-network/dusk-bytes/compare/41dd9bbee37769c5fa1fa3079ee61cb6887c1bd3...dusk-bytes-0.1.6
